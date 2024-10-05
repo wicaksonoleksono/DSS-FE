@@ -26,16 +26,15 @@ type DecisionMatrix = {
 const MethodSelector: React.FC = () => {
   // State management untuk kriteria, decision matrix, hasil, dan error
   const [criteria, setCriteria] = useState<Criteria[]>([
-    { name: "C1", weight: 1, type: "benefit" },
-    { name: "C2", weight: 2, type: "cost" },
-    { name: "C3", weight: 3, type: "benefit" },
+    { name: "Kriteria 1", weight: 1, type: "benefit" },
+    { name: "Kriteria 2", weight: 2, type: "cost" },
+    { name: "Kriteria 3", weight: 3, type: "benefit" },
   ]);
   const [matrix, setMatrix] = useState<DecisionMatrix>([]);
   const [scores, setScores] = useState<Record<string, number> | null>(null);
   const [method, setMethod] = useState<"saw" | "wp">("saw");
   const [error, setError] = useState<string | null>(null); // State untuk menangani error
 
-  // Fungsi untuk memanggil API SAW atau WP berdasarkan metode yang dipilih
   const handleCalculation = async () => {
     setError(null);
     setScores(null);
@@ -47,11 +46,7 @@ const MethodSelector: React.FC = () => {
           : await calculateWpV2(data);
       setScores(response.scores);
     } catch (err: any) {
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Unexpected error occurred.");
-      }
+      setError(err.message || "Unexpected error occurred.");
     }
   };
 
@@ -110,7 +105,6 @@ const MethodSelector: React.FC = () => {
         )}
       </div>
 
-      {/* Form untuk Criteria dan Matrix */}
       <DecisionMatrixForm
         criteria={criteria}
         onMatrixChange={setMatrix}
@@ -120,14 +114,12 @@ const MethodSelector: React.FC = () => {
         }}
       />
 
-      {/* Error Handling Box */}
       {error && (
-        <div className="bg-red-200 text-red-700 p-4 rounded mb-4">
+        <div className="bg-red-200 text-red-700 p-4 rounded mb-4 whitespace-pre-wrap">
           <strong>Error:</strong> {error}
         </div>
       )}
-
-      {scores && <Results scores={scores} />}
+      {scores && !error && <Results scores={scores} />}
 
       {/* Tombol untuk menghitung */}
       <button

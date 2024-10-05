@@ -13,8 +13,6 @@ const endpoint = {
   get: "/wp/results",
   calculatev2: "/wp/v2/calculate",
 };
-//second version
-// Definisikan tipe untuk input WP
 type DecisionMatrix = {
   alternative: string;
   criteria_scores: { [key: string]: number };
@@ -35,21 +33,21 @@ type WpInput = {
 // Implementasi `calculateWpV2`
 const calculateWpV2 = async ({ criteria, decision_matrix }: WpInput) => {
   try {
-    // Kirim request POST ke endpoint WP V2
+    console.log(criteria, decision_matrix);
     const response = await axios.post(`${base_url}${endpoint.calculatev2}`, {
       criteria,
       decision_matrix,
     });
     console.log("Calculation result WP V2:", response.data);
-    return response.data; // Kembalikan hasil kalkulasi
+    return response.data;
   } catch (err: any) {
-    // Tangani error menggunakan `window.alert`
     window.alert(
-      `Error calculating WP V2: ${err.response?.data?.message || err.message}`
+      `Error calculating WP: ${err.response?.data?.message || err.message}`
     );
     return null;
   }
 };
+
 //second version
 const calculateWp = async ({
   criteria_weights,

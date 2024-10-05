@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-// Tipe untuk struktur kriteria dan sub-kriteria
+// Types for criteria and sub-criteria
 type SubCriteria = {
   name: string;
   weight: number;
@@ -31,16 +31,15 @@ const DecisionMatrixForm: React.FC<Props> = ({
   onSubmit,
 }) => {
   const [matrix, setMatrix] = useState<DecisionMatrix>([
-    { alternative: "A1", criteria_scores: {} },
-    { alternative: "A2", criteria_scores: {} },
-    { alternative: "A3", criteria_scores: {} },
+    { alternative: "Alternatif 1", criteria_scores: {} },
+    { alternative: "Alternatif 2", criteria_scores: {} },
+    { alternative: "Alternatif 3", criteria_scores: {} },
   ]);
 
   useEffect(() => {
     const updatedMatrix = matrix.map((alternative) => {
       const updatedScores = { ...alternative.criteria_scores };
       criteria.forEach((criterion) => {
-        // Tambahkan kolom untuk kriteria utama dan sub-kriteria
         if (criterion.subcriteria && criterion.subcriteria.length > 0) {
           criterion.subcriteria.forEach((sub) => {
             if (!(sub.name in updatedScores)) {
@@ -81,7 +80,7 @@ const DecisionMatrixForm: React.FC<Props> = ({
   const addAlternative = () => {
     setMatrix([
       ...matrix,
-      { alternative: `A${matrix.length + 1}`, criteria_scores: {} },
+      { alternative: `Alternatif ${matrix.length + 1}`, criteria_scores: {} },
     ]);
   };
 
@@ -95,7 +94,7 @@ const DecisionMatrixForm: React.FC<Props> = ({
     onSubmit(
       [
         ...criteria,
-        { name: `C${criteria.length + 1}`, weight: 1, type: "benefit" },
+        { name: `Kriteria ${criteria.length + 1}`, weight: 1, type: "benefit" },
       ],
       matrix
     );
@@ -107,7 +106,7 @@ const DecisionMatrixForm: React.FC<Props> = ({
       updatedCriteria[index].subcriteria = [];
     }
     updatedCriteria[index].subcriteria!.push({
-      name: `${updatedCriteria[index].name}.SC${
+      name: `${updatedCriteria[index].name}.Sub Kriteria ${
         updatedCriteria[index].subcriteria!.length + 1
       }`,
       weight: 1,
@@ -150,7 +149,18 @@ const DecisionMatrixForm: React.FC<Props> = ({
     onSubmit(updatedCriteria, matrix);
   };
 
-  const createTableHeaders = () => {
+  const removeSubCriteria = (index: number, subIndex: number) => {
+    const updatedCriteria = [...criteria];
+    if (updatedCriteria[index].subcriteria) {
+      updatedCriteria[index].subcriteria = updatedCriteria[
+        index
+      ].subcriteria!.filter((_, i) => i !== subIndex);
+    }
+    onSubmit(updatedCriteria, matrix);
+  };
+
+  // Function to generate all headers including subcriteria
+  const getAllHeaders = () => {
     const headers: string[] = [];
     criteria.forEach((criterion) => {
       if (criterion.subcriteria && criterion.subcriteria.length > 0) {
@@ -162,23 +172,9 @@ const DecisionMatrixForm: React.FC<Props> = ({
     return headers;
   };
 
-  const handleSubmit = () => {
-    const sanitizedCriteria = criteria.map((criterion) => ({
-      ...criterion,
-      subcriteria: criterion.subcriteria || [],
-    }));
-
-    const result = {
-      criteria: sanitizedCriteria,
-      decision_matrix: matrix,
-    };
-    console.log(JSON.stringify(result, null, 2));
-    onSubmit(sanitizedCriteria, matrix);
-  };
-
   return (
     <div>
-      <h3>Decision Matrix Input</h3>
+      <h3 className="text-xl font-semibold mb-4">Decision Matrix Input</h3>
       <div className="mb-4">
         <button
           onClick={addCriteria}
@@ -192,66 +188,65 @@ const DecisionMatrixForm: React.FC<Props> = ({
         >
           Add Alternative
         </button>
-        <button
-          onClick={handleSubmit}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ml-2"
-        >
-          Submit
-        </button>
       </div>
 
-      {/* Form untuk mengubah bobot kriteria dan nama sub-kriteria */}
+      {/* Form for editing criteria and sub-criteria */}
       {criteria.map((criterion, index) => (
-        <div key={index} className="mb-2">
-          <input
-            type="text"
-            value={criterion.name}
-            onChange={(e) => handleCriteriaNameChange(index, e.target.value)}
-            className="border rounded px-2 py-1 mr-2"
-          />
-          <input
-            type="number"
-            value={criterion.weight}
-            onChange={(e) => handleWeightChange(index, e.target.value)}
-            className="border rounded px-2 py-1 mr-2"
-          />
-          <select
-            value={criterion.type}
-            onChange={(e) => {
-              const updatedCriteria = [...criteria];
-              updatedCriteria[index].type = e.target.value;
-              onSubmit(updatedCriteria, matrix);
-            }}
-            className="border rounded px-2 py-1 mr-2"
-          >
-            <option value="benefit">Benefit</option>
-            <option value="cost">Cost</option>
-          </select>
-          <button
-            onClick={() => addSubCriteria(index)}
-            className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-2"
-          >
-            Add Sub-Criteria
-          </button>
-          <button
-            onClick={() => removeCriteria(index)}
-            className="text-red-500 hover:text-red-700"
-          >
-            Remove Criteria
-          </button>
+        <div key={index} className="mb-4 border p-4 rounded">
+          <div className="flex items-center mb-2">
+            <input
+              type="text"
+              value={criterion.name}
+              onChange={(e) => handleCriteriaNameChange(index, e.target.value)}
+              className="border rounded px-2 py-1 mr-2 flex-1"
+              placeholder="Criteria Name"
+            />
+            <input
+              type="number"
+              value={criterion.weight}
+              onChange={(e) => handleWeightChange(index, e.target.value)}
+              className="border rounded px-2 py-1 mr-2 w-24"
+              placeholder="Weight"
+            />
+            <select
+              value={criterion.type}
+              onChange={(e) => {
+                const updatedCriteria = [...criteria];
+                updatedCriteria[index].type = e.target.value;
+                onSubmit(updatedCriteria, matrix);
+              }}
+              className="border rounded px-2 py-1 mr-2 w-32"
+            >
+              <option value="benefit">Benefit</option>
+              <option value="cost">Cost</option>
+            </select>
+            <button
+              onClick={() => addSubCriteria(index)}
+              className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 mr-2"
+            >
+              Add Sub-Criteria
+            </button>
+            <button
+              onClick={() => removeCriteria(index)}
+              className="text-red-500 hover:text-red-700"
+            >
+              Remove
+            </button>
+          </div>
 
           {/* Sub-Criteria Form */}
           {criterion.subcriteria && criterion.subcriteria.length > 0 && (
-            <div className="ml-4">
+            <div className="ml-6 mt-2">
               {criterion.subcriteria.map((sub, subIndex) => (
-                <div key={subIndex} className="mb-1">
+                <div key={subIndex} className="flex items-center mb-1">
                   <input
                     type="text"
                     value={sub.name}
                     onChange={(e) =>
                       handleCriteriaNameChange(index, e.target.value, subIndex)
                     }
-                    className="border rounded px-2 py-1 mr-2"
+                    className="border rounded px-2 py-1 mr-2 flex-1"
+                    placeholder="Sub-Criteria Name"
                   />
                   <input
                     type="number"
@@ -259,8 +254,28 @@ const DecisionMatrixForm: React.FC<Props> = ({
                     onChange={(e) =>
                       handleWeightChange(index, e.target.value, subIndex)
                     }
-                    className="border rounded px-2 py-1"
+                    className="border rounded px-2 py-1 mr-2 w-24"
+                    placeholder="Weight"
                   />
+                  <select
+                    value={sub.type}
+                    onChange={(e) => {
+                      const updatedCriteria = [...criteria];
+                      updatedCriteria[index].subcriteria![subIndex].type =
+                        e.target.value;
+                      onSubmit(updatedCriteria, matrix);
+                    }}
+                    className="border rounded px-2 py-1 mr-2 w-32"
+                  >
+                    <option value="benefit">Benefit</option>
+                    <option value="cost">Cost</option>
+                  </select>
+                  <button
+                    onClick={() => removeSubCriteria(index, subIndex)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remove
+                  </button>
                 </div>
               ))}
             </div>
@@ -268,18 +283,48 @@ const DecisionMatrixForm: React.FC<Props> = ({
         </div>
       ))}
 
-      {/* Pembungkus tabel dengan overflow */}
+      {/* Table Wrapper with Overflow */}
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse">
           <thead>
+            {/* First Header Row */}
             <tr className="bg-gray-200">
-              <th className="border px-4 py-2">Alternatif</th>
-              {createTableHeaders().map((header, index) => (
-                <th key={index} className="border px-4 py-2">
-                  {header}
-                </th>
-              ))}
-              <th className="border px-4 py-2">Action</th>
+              <th rowSpan={2} className="border px-4 py-2">
+                Alternatif
+              </th>
+              {criteria.map((criterion, index) =>
+                criterion.subcriteria && criterion.subcriteria.length > 0 ? (
+                  <th
+                    key={index}
+                    colSpan={criterion.subcriteria.length}
+                    className="border px-4 py-2"
+                  >
+                    {criterion.name}
+                  </th>
+                ) : (
+                  <th key={index} rowSpan={2} className="border px-4 py-2">
+                    {criterion.name}
+                  </th>
+                )
+              )}
+              <th rowSpan={2} className="border px-4 py-2">
+                Action
+              </th>
+            </tr>
+            {/* Second Header Row for Sub-Criteria */}
+            <tr className="bg-gray-200">
+              {criteria.map((criterion, index) =>
+                criterion.subcriteria && criterion.subcriteria.length > 0
+                  ? criterion.subcriteria.map((sub, subIndex) => (
+                      <th
+                        key={`${index}-${subIndex}`}
+                        className="border px-4 py-2"
+                      >
+                        {sub.name}
+                      </th>
+                    ))
+                  : null
+              )}
             </tr>
           </thead>
           <tbody>
@@ -295,21 +340,49 @@ const DecisionMatrixForm: React.FC<Props> = ({
                       setMatrix(updatedMatrix);
                       onMatrixChange(updatedMatrix);
                     }}
-                    className="border rounded px-2 py-1"
+                    className="border rounded px-2 py-1 w-full"
                   />
                 </td>
-                {createTableHeaders().map((header) => (
-                  <td key={header} className="border px-4 py-2">
-                    <input
-                      type="number"
-                      value={row.criteria_scores[header] || 0}
-                      onChange={(e) =>
-                        handleInputChange(rowIndex, header, e.target.value)
-                      }
-                      className="border rounded px-2 py-1"
-                    />
-                  </td>
-                ))}
+
+                {criteria.map((criterion, index) =>
+                  criterion.subcriteria && criterion.subcriteria.length > 0 ? (
+                    criterion.subcriteria.map((sub, subIndex) => (
+                      <td
+                        key={`${index}-${subIndex}`}
+                        className="border px-4 py-2"
+                      >
+                        <input
+                          type="number"
+                          value={row.criteria_scores[sub.name] || ""}
+                          onChange={(e) =>
+                            handleInputChange(
+                              rowIndex,
+                              sub.name,
+                              e.target.value
+                            )
+                          }
+                          className="border rounded px-2 py-1 w-full"
+                        />
+                      </td>
+                    ))
+                  ) : (
+                    <td key={index} className="border px-4 py-2">
+                      <input
+                        type="number"
+                        value={row.criteria_scores[criterion.name] || ""}
+                        onChange={(e) =>
+                          handleInputChange(
+                            rowIndex,
+                            criterion.name,
+                            e.target.value
+                          )
+                        }
+                        className="border rounded px-2 py-1 w-full"
+                      />
+                    </td>
+                  )
+                )}
+
                 <td className="border px-4 py-2">
                   <button
                     onClick={() => removeAlternative(rowIndex)}

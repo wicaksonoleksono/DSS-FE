@@ -1,7 +1,6 @@
 import axios from "axios";
 import { base_url } from "./config";
 
-console.log(base_url);
 type Matrix = number[][];
 type Wp = {
   criteria_weights: number[];
@@ -38,17 +37,16 @@ type SawInput = {
 // Implementasi calculateSawV2
 const calculateSawV2 = async ({ criteria, decision_matrix }: SawInput) => {
   try {
-    // Kirim request POST ke endpoint SAW V2
+    console.log(criteria, decision_matrix);
     const response = await axios.post(`${base_url}${endpoint.calculatev2}`, {
       criteria,
       decision_matrix,
     });
-    console.log("Calculation result V2:", response.data);
     return response.data; // Kembalikan hasil kalkulasi
   } catch (err: any) {
     // Tangani error menggunakan `window.alert`
     window.alert(
-      `Error calculating SAW V2: ${err.response?.data?.message || err.message}`
+      `Error calculating SAW: ${err.response?.data?.message || err.message}`
     );
     return null;
   }
