@@ -340,7 +340,7 @@ const DecisionMatrixForm: React.FC<Props> = ({
                       >
                         <input
                           type="number"
-                          value={row.criteria_scores[sub.name] || ""}
+                          value={row.criteria_scores[sub.name] ?? "0"}
                           onChange={(e) =>
                             handleInputChange(
                               rowIndex,
@@ -356,7 +356,7 @@ const DecisionMatrixForm: React.FC<Props> = ({
                     <td key={index} className="border px-4 py-2">
                       <input
                         type="number"
-                        value={row.criteria_scores[criterion.name] || ""}
+                        value={row.criteria_scores[criterion.name] || "0"}
                         onChange={(e) =>
                           handleInputChange(
                             rowIndex,
