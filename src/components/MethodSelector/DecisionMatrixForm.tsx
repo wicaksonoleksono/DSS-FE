@@ -159,19 +159,6 @@ const DecisionMatrixForm: React.FC<Props> = ({
     onSubmit(updatedCriteria, matrix);
   };
 
-  // Function to generate all headers including subcriteria
-  const getAllHeaders = () => {
-    const headers: string[] = [];
-    criteria.forEach((criterion) => {
-      if (criterion.subcriteria && criterion.subcriteria.length > 0) {
-        criterion.subcriteria.forEach((sub) => headers.push(sub.name));
-      } else {
-        headers.push(criterion.name);
-      }
-    });
-    return headers;
-  };
-
   return (
     <div>
       <h3 className="text-xl font-semibold mb-4">Decision Matrix Input</h3>

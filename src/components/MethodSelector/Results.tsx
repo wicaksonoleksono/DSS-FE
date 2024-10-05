@@ -22,7 +22,7 @@ const Results: React.FC<Props> = ({ scores }) => {
           Ranking Alternatif Terbaik
         </h3>
         <ol className="list-decimal list-inside">
-          {topThree.map(([alternative], index) => (
+          {topThree.map(([alternative]) => (
             <li key={alternative} className="mb-1">
               {alternative}
             </li>
