@@ -275,7 +275,7 @@ const DecisionMatrixForm: React.FC<Props> = ({
         <table className="table-auto w-full border-collapse">
           <thead>
             {/* First Header Row */}
-            <tr className="bg-gray-200">
+            <tr className="">
               <th rowSpan={2} className="border px-4 py-2">
                 Alternatif
               </th>
@@ -299,7 +299,7 @@ const DecisionMatrixForm: React.FC<Props> = ({
               </th>
             </tr>
             {/* Second Header Row for Sub-Criteria */}
-            <tr className="bg-gray-200">
+            <tr className="">
               {criteria.map((criterion, index) =>
                 criterion.subcriteria && criterion.subcriteria.length > 0
                   ? criterion.subcriteria.map((sub, subIndex) => (

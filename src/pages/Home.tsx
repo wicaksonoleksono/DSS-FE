@@ -78,7 +78,7 @@ const Home: React.FC = () => {
       </h3>
       <div className="mb-4">
         <button
-          className={`bg-blue-500 text-white px-4 py-2 mr-2 rounded hover:bg-blue-600 ${
+          className={`bg-blue-500 px-4 py-2 mr-2 rounded hover:bg-blue-600 ${
             method === "saw" ? "bg-blue-700" : ""
           }`}
           onClick={() => setMethod("saw")}
@@ -86,7 +86,7 @@ const Home: React.FC = () => {
           Simple Additive Weighting (SAW)
         </button>
         <button
-          className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
+          className={`bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 ${
             method === "wp" ? "bg-blue-700" : ""
           }`}
           onClick={() => setMethod("wp")}
